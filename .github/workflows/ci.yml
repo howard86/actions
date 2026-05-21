@@ -1,0 +1,112 @@
+# Reusable CI workflow for Bun + Turbo monorepos.
+# These steps deliberately duplicate the `setup` and `quality` composites
+# inline. A relative `./setup` reference would resolve against the *caller's*
+# checkout (not this repo), and the full-ref form `howard86/actions/setup@<ref>`
+# can't pin to this commit's own in-flight SHA — a moving/older ref would either
+# defeat the SHA-pinning this repo exists to enforce or test stale composites.
+# So the copy is intentional; test.yml runs both this workflow and the
+# composites against the fixture to catch drift between them.
+name: CI
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        description: Node.js version. Empty skips Node setup.
+        type: string
+        required: false
+        default: ""
+      run-test:
+        description: Run `bun run test`.
+        type: boolean
+        required: false
+        default: true
+      run-build:
+        description: Run `bun run build`.
+        type: boolean
+        required: false
+        default: true
+      working-directory:
+        description: Directory to install and run scripts in.
+        type: string
+        required: false
+        default: "."
+    secrets:
+      gitleaks-license:
+        required: false
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    # Applies to `run:` steps only (install + the bun scripts). The typos /
+    # gitleaks / actionlint action steps ignore it and scan the repo root by
+    # design — secret-scanning and workflow-linting should cover the whole repo,
+    # not just one workspace subdirectory.
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version-file: ${{ inputs.working-directory }}/package.json
+
+      - name: Setup Node.js
+        if: inputs.node-version != ''
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - name: Cache Turbo
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        with:
+          path: ${{ inputs.working-directory }}/.turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
+
+      - name: Cache Bun install
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles(format('{0}/bun.lock', inputs.working-directory)) }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Lint
+        run: bun run check
+
+      - name: Spell-check (typos)
+        uses: crate-ci/typos@aca895bf05aec0cb7dffa6f94495e923224d9f17 # v1.46.2
+
+      - name: Secret scan (gitleaks)
+        uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2.3.9
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_LICENSE: ${{ secrets.gitleaks-license }}
+
+      - name: Lint workflows (actionlint)
+        uses: reviewdog/action-actionlint@6fb7acc99f4a1008869fa8a0f09cfca740837d9d # v1.72.0
+        with:
+          fail_level: error
+
+      - name: Typecheck
+        run: bun run typecheck
+
+      - name: Test
+        if: ${{ inputs.run-test }}
+        run: bun run test
+
+      - name: Build
+        if: ${{ inputs.run-build }}
+        run: bun run build
