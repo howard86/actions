@@ -1,0 +1,10 @@
+# Bundled default gitleaks config for howard86/actions consumers.
+# A repo-local .gitleaks.toml / gitleaks.toml takes precedence over this.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Sample env files contain placeholder credentials only."
+paths = [
+  '''.*\.env\.sample$''',
+]

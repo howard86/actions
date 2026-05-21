@@ -1,0 +1,4 @@
+# Self-scan config for this repo. Consumers get the bundled default in
+# quality/configs/gitleaks.toml unless they ship their own.
+[extend]
+useDefault = true

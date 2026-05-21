@@ -1,0 +1,18 @@
+# Bundled default typos config for howard86/actions consumers.
+# A repo-local _typos.toml / typos.toml / .typos.toml takes precedence over this.
+[default]
+extend-ignore-re = [
+  "(?Rm)^.*(#|//)\\s*spellchecker:disable-line$",
+]
+
+[files]
+extend-exclude = [
+  "*.lock",
+  "*.snap",
+  "CHANGELOG.md",
+  "node_modules",
+  ".next",
+  ".turbo",
+  "dist",
+  "build",
+]
