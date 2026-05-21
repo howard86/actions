@@ -1,0 +1,21 @@
+version: 2
+updates:
+  # Keeps the SHA pins (with their # vX.Y.Z comments) in this repo's workflows
+  # AND composite actions current. This repo is the single source of truth for
+  # third-party action versions, so updates land here first.
+  #
+  # Dependabot's github-actions updater only scans .github/workflows for "/";
+  # nested composite action.yml files must be listed explicitly, so /setup and
+  # /quality are enumerated here. Explicit paths (not a "**" glob) avoid the
+  # duplicate-PR bug in dependabot-core#10884.
+  - package-ecosystem: github-actions
+    directories:
+      - /
+      - /setup
+      - /quality
+    schedule:
+      interval: weekly
+    groups:
+      github-actions:
+        patterns:
+          - "*"
