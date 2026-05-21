@@ -1,0 +1,9 @@
+{
+  "name": "@fixture/app",
+  "private": true,
+  "scripts": {
+    "typecheck": "echo typecheck-ok",
+    "test": "echo test-ok",
+    "build": "echo build-ok"
+  }
+}

@@ -1,0 +1,47 @@
+# Self-test: exercise both the reusable ci.yml and the composites against a
+# minimal Bun + Turbo fixture, so a broken action fails HERE rather than in a
+# downstream consumer.
+name: Test
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: test-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  reusable-ci:
+    name: Reusable ci.yml against fixture
+    uses: ./.github/workflows/ci.yml
+    with:
+      working-directory: fixtures/minimal
+      node-version: "24"
+      run-test: true
+      run-build: true
+
+  composites:
+    name: Composites against fixture
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+
+      - name: setup composite
+        uses: ./setup
+        with:
+          node-version: "24"
+          working-directory: fixtures/minimal
+
+      - name: quality composite
+        uses: ./quality
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
