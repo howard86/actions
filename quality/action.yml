@@ -1,0 +1,82 @@
+name: Quality checks
+description: >-
+  Run spell-check (typos), secret scan (gitleaks), and GitHub Actions linting
+  (actionlint). Uses a repo-local typos/gitleaks config when present, otherwise
+  the bundled default shipped with this action. Requires the repository to be
+  checked out with fetch-depth 0 so gitleaks can scan history.
+
+inputs:
+  github-token:
+    description: Token for gitleaks (pass secrets.GITHUB_TOKEN).
+    required: true
+  gitleaks-license:
+    description: GITLEAKS_LICENSE for gitleaks-action org/enterprise use.
+    required: false
+    default: ""
+  typos-config:
+    description: Path to a typos config. Overrides auto-detection and the bundled default.
+    required: false
+    default: ""
+  gitleaks-config:
+    description: Path to a gitleaks config. Overrides auto-detection and the bundled default.
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    # Inputs/paths are bound to env vars and referenced as quoted shell
+    # variables — never interpolated as ${{ }} into the script body, which
+    # would be a command-injection vector.
+    - name: Resolve typos config
+      id: typos
+      shell: bash
+      env:
+        OVERRIDE: ${{ inputs.typos-config }}
+        BUNDLED: ${{ github.action_path }}/configs/typos.toml
+      run: |
+        if [ -n "$OVERRIDE" ]; then
+          config="$OVERRIDE"
+        elif [ -f _typos.toml ] || [ -f typos.toml ] || [ -f .typos.toml ]; then
+          config=""   # empty: let typos natively auto-discover the repo-local config
+        else
+          config="$BUNDLED"
+        fi
+        echo "config=$config" >> "$GITHUB_OUTPUT"
+
+    - name: Spell-check (typos)
+      uses: crate-ci/typos@aca895bf05aec0cb7dffa6f94495e923224d9f17 # v1.46.2
+      with:
+        config: ${{ steps.typos.outputs.config }}
+
+    # gitleaks-action loads config from the GITLEAKS_CONFIG env var, so a
+    # concrete path is always resolved (repo-local or bundled fallback).
+    - name: Resolve gitleaks config
+      id: gitleaks
+      shell: bash
+      env:
+        OVERRIDE: ${{ inputs.gitleaks-config }}
+        BUNDLED: ${{ github.action_path }}/configs/gitleaks.toml
+      run: |
+        if [ -n "$OVERRIDE" ]; then
+          config="$OVERRIDE"
+        elif [ -f .gitleaks.toml ]; then
+          config=".gitleaks.toml"
+        elif [ -f gitleaks.toml ]; then
+          config="gitleaks.toml"
+        else
+          config="$BUNDLED"
+        fi
+        echo "config=$config" >> "$GITHUB_OUTPUT"
+
+    - name: Secret scan (gitleaks)
+      uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2.3.9
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+        GITLEAKS_LICENSE: ${{ inputs.gitleaks-license }}
+        GITLEAKS_CONFIG: ${{ steps.gitleaks.outputs.config }}
+
+    - name: Lint workflows (actionlint)
+      uses: reviewdog/action-actionlint@6fb7acc99f4a1008869fa8a0f09cfca740837d9d # v1.72.0
+      with:
+        fail_level: error
