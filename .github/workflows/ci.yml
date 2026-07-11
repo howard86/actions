@@ -78,7 +78,7 @@ jobs:
 
       - name: Cache Turbo
         if: inputs.cache-turbo
-        uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8 # v6.0.0
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ${{ inputs.working-directory }}/.turbo
           key: ${{ runner.os }}-turbo-${{ hashFiles(format('{0}/bun.lock', inputs.working-directory), format('{0}/turbo.json', inputs.working-directory), '**/package.json') }}-${{ github.ref_name }}
@@ -88,7 +88,7 @@ jobs:
 
       - name: Cache Bun install
         if: inputs.cache-bun
-        uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8 # v6.0.0
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/.bun/install/cache
           key: ${{ runner.os }}-bun-${{ hashFiles(format('{0}/bun.lock', inputs.working-directory)) }}
@@ -102,7 +102,7 @@ jobs:
         run: bun run check
 
       - name: Spell-check (typos)
-        uses: crate-ci/typos@37bb98842b0d8c4ffebdb75301a13db0267cef89 # v1.47.2
+        uses: crate-ci/typos@bee27e3a4fd1ea2111cf90ab89cd076c870fce14 # v1.48.0
 
       - name: Secret scan (gitleaks)
         uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3.0.0
