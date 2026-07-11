@@ -60,6 +60,8 @@ actionlint → `bun run typecheck` → `bun run test` → `bun run build`.
 | `run-test` | boolean | `true` | Set `false` if the repo has no tests. |
 | `run-build` | boolean | `true` | Pass an expression to build on `main` only. |
 | `working-directory` | string | `"."` | Install/run scripts in a subdirectory. |
+| `cache-bun` | boolean | `true` | Set `false` on self-hosted sticky runners (avoids re-downloading ~270 MB). |
+| `cache-turbo` | boolean | `true` | Set `false` to skip Turbo local-cache restore/save. |
 
 | Secret | Required | Notes |
 |--------|----------|-------|
@@ -71,20 +73,25 @@ Requires these root scripts in the consumer: `check`, `typecheck`, `test`,
 
 ## Composite: `setup`
 
-Sets up Bun (and optionally Node), restores the Turbo and Bun caches, and runs a
-frozen install. Assumes the repo is already checked out.
+Sets up Bun (and optionally Node), optionally restores the Turbo and Bun
+caches, and runs a frozen install. Assumes the repo is already checked out.
 
 ```yaml
 - uses: actions/checkout@<sha>
 - uses: howard86/actions/setup@<sha> # v1.0.0
   with:
     node-version: "24"   # optional
+    # Skip GHA Bun cache on self-hosted — local ~/.bun already persists and a
+    # 270 MB restore is slower than a warm local install.
+    cache-bun: ${{ runner.environment != 'self-hosted' }}
 ```
 
 | Input | Default | Notes |
 |-------|---------|-------|
 | `node-version` | `""` | Empty skips Node setup. |
 | `working-directory` | `"."` | Directory holding `package.json` / `bun.lock`. |
+| `cache-bun` | `"true"` | Restore/save `~/.bun/install/cache`. Set `"false"` on sticky self-hosted runners. |
+| `cache-turbo` | `"true"` | Restore/save `.turbo`. Turbo key is lockfile + manifests + ref (not `github.sha`). |
 
 ## Composite: `quality`
 
