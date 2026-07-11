@@ -15,6 +15,11 @@ updates:
       - /quality
     schedule:
       interval: weekly
+    # chore(deps) is visible in release-please-config (patch releases). Keep
+    # the conventional chore prefix so bumps land under "Dependencies".
+    commit-message:
+      prefix: "chore"
+      include: "scope"
     groups:
       github-actions:
         patterns:

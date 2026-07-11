@@ -1,8 +1,20 @@
+# release-please
+#
+# Runs on every push to main — including Dependabot merges. This repo's job is
+# to pin third-party action SHAs; a Dependabot bump is a shippable change, so
+# release-please-config.json treats `chore` (Dependabot's default prefix) as a
+# visible patch-level section rather than hiding it.
+#
+# Requires repo Setting → Actions → General →
+#   "Allow GitHub Actions to create and approve pull requests" = enabled.
 name: Release Please
 
 on:
   push:
     branches: [main]
+  # Manual re-run after config changes or if a Dependabot merge did not
+  # refresh the Release PR for any reason.
+  workflow_dispatch:
 
 permissions:
   contents: write
