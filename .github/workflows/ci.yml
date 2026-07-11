@@ -31,6 +31,18 @@ on:
         type: string
         required: false
         default: "."
+      cache-bun:
+        description: >-
+          Restore/save ~/.bun/install/cache via actions/cache. Set false on
+          self-hosted sticky runners where the local Bun cache already persists.
+        type: boolean
+        required: false
+        default: true
+      cache-turbo:
+        description: Restore/save the Turbo local cache under .turbo.
+        type: boolean
+        required: false
+        default: true
     secrets:
       gitleaks-license:
         required: false
@@ -65,14 +77,17 @@ jobs:
           node-version: ${{ inputs.node-version }}
 
       - name: Cache Turbo
+        if: inputs.cache-turbo
         uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8 # v6.0.0
         with:
           path: ${{ inputs.working-directory }}/.turbo
-          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          key: ${{ runner.os }}-turbo-${{ hashFiles(format('{0}/bun.lock', inputs.working-directory), format('{0}/turbo.json', inputs.working-directory), '**/package.json') }}-${{ github.ref_name }}
           restore-keys: |
+            ${{ runner.os }}-turbo-${{ hashFiles(format('{0}/bun.lock', inputs.working-directory), format('{0}/turbo.json', inputs.working-directory), '**/package.json') }}-
             ${{ runner.os }}-turbo-
 
       - name: Cache Bun install
+        if: inputs.cache-bun
         uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8 # v6.0.0
         with:
           path: ~/.bun/install/cache
