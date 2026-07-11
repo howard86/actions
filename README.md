@@ -134,3 +134,9 @@ fixtures/minimal/             tiny Bun + Turbo workspace for the self-test
 Conventional-commit to `main`; release-please opens a release PR. Merging it
 tags `vX.Y.Z` and publishes a GitHub release. Consumers' updaters then pick up
 the new SHA.
+
+**Dependabot is release-worthy here.** Merging a Dependabot PR (or any other
+`chore` on `main`) is a push to `main`, so release-please re-runs. `chore`
+commits are a **visible** changelog section (not hidden), so a deps-only cycle
+still opens/updates a patch Release PR — consumers get a new tag for the
+bumped action pins.
