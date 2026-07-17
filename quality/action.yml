@@ -76,7 +76,16 @@ runs:
         GITLEAKS_LICENSE: ${{ inputs.gitleaks-license }}
         GITLEAKS_CONFIG: ${{ steps.gitleaks.outputs.config }}
 
+    # actionlint itself needs no GitHub API. reviewdog's default github-pr-check
+    # reporter fetches the PR diff to filter findings to changed files, so a
+    # transient api.github.com 503 reds this gate even when every workflow is
+    # clean. local + nofilter keeps the identical pass/fail with zero API calls;
+    # findings print to the job log with file:line:col instead of as inline PR
+    # annotations. nofilter is required -- the local reporter demands a -diff
+    # flag it cannot obtain under any diff-based filter mode.
     - name: Lint workflows (actionlint)
       uses: reviewdog/action-actionlint@6fb7acc99f4a1008869fa8a0f09cfca740837d9d # v1.72.0
       with:
         fail_level: error
+        reporter: local
+        filter_mode: nofilter
