@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.0.2](https://github.com/howard86/actions/compare/v1.0.1...v1.0.2) (2026-07-17)
+
+
+### Bug Fixes
+
+* **quality:** lint workflows without calling the GitHub API ([986ac8a](https://github.com/howard86/actions/commit/986ac8a437a2aa80d4e8fa8f5190c2fd71ae60da))
+* **quality:** lint workflows without calling the GitHub API ([aa7a93c](https://github.com/howard86/actions/commit/aa7a93ca94a8a170c6b5e0ce7a3c88745fcb6522))
+
+
+### Dependencies
+
+* **deps:** bump the github-actions group across 2 directories with 1 update ([a4e4b6e](https://github.com/howard86/actions/commit/a4e4b6e22d952a8e3bae479520c08dc37c7687f5))
+* **deps:** bump the github-actions group across 2 directories with 1 update ([4cd8cec](https://github.com/howard86/actions/commit/4cd8cecc275c403a98f019844a1c105d47708f42))
+
 ## [1.0.1](https://github.com/howard86/actions/compare/v1.0.0...v1.0.1) (2026-07-11)
 
 
