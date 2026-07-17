@@ -110,10 +110,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITLEAKS_LICENSE: ${{ secrets.gitleaks-license }}
 
+      # Kept in sync with the quality composite: reporter/filter_mode avoid the
+      # GitHub API entirely, so a transient 503 can't red a clean gate.
       - name: Lint workflows (actionlint)
         uses: reviewdog/action-actionlint@6fb7acc99f4a1008869fa8a0f09cfca740837d9d # v1.72.0
         with:
           fail_level: error
+          reporter: local
+          filter_mode: nofilter
 
       - name: Typecheck
         run: bun run typecheck
