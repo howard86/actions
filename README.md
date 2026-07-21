@@ -52,7 +52,8 @@ jobs:
 
 Runs, in order: checkout (fetch-depth 0) → Bun (+ optional Node) → Turbo & Bun
 caches → `bun install --frozen-lockfile` → `bun run check` → typos → gitleaks →
-actionlint → `bun run typecheck` → `bun run test` → `bun run build`.
+actionlint → `bun run typecheck` → `bun run knip` → `bun run test` →
+`bun run build`.
 
 | Input | Type | Default | Notes |
 |-------|------|---------|-------|
@@ -68,8 +69,15 @@ actionlint → `bun run typecheck` → `bun run test` → `bun run build`.
 | `gitleaks-license` | no | Only for gitleaks org/enterprise features. |
 | `GITHUB_TOKEN` | — | Provided automatically to the called workflow. |
 
-Requires these root scripts in the consumer: `check`, `typecheck`, `test`,
-`build`. (`bun run check` is `ultracite check` in all current consumers.)
+Requires these root scripts in the consumer: `check`, `typecheck`, `knip`,
+`test`, `build`. (`bun run check` is `ultracite check` in all current
+consumers.)
+
+`knip` is required and has no opt-out input — as of v2.0.0 a repo without a
+`knip` script fails CI. Expect to tune `knip.json` before adopting: knip
+reports unused files, exports and dependencies, and its first run on an
+established repo is noisy (framework conventions and dynamic imports read as
+false positives). Stay on v1 until that pass is done.
 
 ## Composite: `setup`
 
