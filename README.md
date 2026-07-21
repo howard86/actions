@@ -10,8 +10,10 @@ It exposes two layers:
 - **Composite actions** — `setup` and `quality` — step-level building blocks you
   drop into your own jobs.
 - **A reusable workflow** — `.github/workflows/ci.yml` — the batteries-included
-  full-CI job that composes the same steps. Adopt it wholesale for a simple
-  repo, or use the composites à la carte for a complex one.
+  full-CI job: the same setup and quality steps inlined, plus the `bun run`
+  gates (`check`, `typecheck`, `knip`, `test`, `build`). Adopt it wholesale for
+  a simple repo, or use the composites à la carte for a complex one — note the
+  gates, `knip` included, exist only in the workflow, not in any composite.
 
 ## How consumers pin
 
@@ -20,7 +22,7 @@ Renovate (already configured in the consumer repos for the `github-actions`
 ecosystem) bump it:
 
 ```yaml
-uses: howard86/actions/setup@<sha> # v1.0.2
+uses: howard86/actions/setup@<sha> # v2.0.0
 ```
 
 Releases here are cut by release-please as `vX.Y.Z` tags; your updater resolves
@@ -39,7 +41,7 @@ on:
 
 jobs:
   ci:
-    uses: howard86/actions/.github/workflows/ci.yml@<sha> # v1.0.2
+    uses: howard86/actions/.github/workflows/ci.yml@<sha> # v2.0.0
     permissions:
       contents: read
     with:
@@ -93,7 +95,7 @@ caches, and runs a frozen install. Assumes the repo is already checked out.
 
 ```yaml
 - uses: actions/checkout@<sha>
-- uses: howard86/actions/setup@<sha> # v1.0.2
+- uses: howard86/actions/setup@<sha> # v2.0.0
   with:
     node-version: "24"   # optional
     # Skip GHA Bun cache on self-hosted — local ~/.bun already persists and a
@@ -124,7 +126,7 @@ the PR diff, and a transient 503 there would red an otherwise clean gate.
 - uses: actions/checkout@<sha>
   with:
     fetch-depth: 0
-- uses: howard86/actions/quality@<sha> # v1.0.2
+- uses: howard86/actions/quality@<sha> # v2.0.0
   with:
     github-token: ${{ secrets.GITHUB_TOKEN }}
 ```
