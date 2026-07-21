@@ -72,7 +72,7 @@ actionlint → `bun run typecheck` → `bun run knip` → `bun run test` →
 Requires these root scripts in the consumer: `check`, `typecheck`, `knip`,
 `test`, `build`. (`bun run check` is `ultracite check` in all current
 consumers.) The Bun version comes from your `package.json`, so it must declare
-`packageManager` (`"bun@1.3.13"`) or `engines.bun` — otherwise setup-bun only
+`packageManager` (`"bun@1.3.14"`) or `engines.bun` — otherwise setup-bun only
 warns and installs the latest Bun.
 
 `knip` is required and has no opt-out input — as of v2.0.0 a repo without a
