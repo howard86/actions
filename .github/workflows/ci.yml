@@ -122,6 +122,11 @@ jobs:
       - name: Typecheck
         run: bun run typecheck
 
+      # Unconditional: an unused-code gate that consumers can switch off is a
+      # gate that stays off. Repos not ready for it stay pinned to v1.
+      - name: Knip
+        run: bun run knip
+
       - name: Test
         if: ${{ inputs.run-test }}
         run: bun run test
