@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/howard86/actions/compare/v1.0.2...v2.0.0) (2026-07-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* **ci:** consumers of ci.yml must add a `knip` script before bumping to v2, or CI fails with `Script not found "knip"`. Expect to tune knip.json first; the initial run on an established repo is noisy. Repos not ready stay pinned to v1.
+
+### Features
+
+* **ci:** require knip in the reusable CI workflow ([75c359d](https://github.com/howard86/actions/commit/75c359d920c158918a28babbcb381d4d74c8a903))
+
 ## [1.0.2](https://github.com/howard86/actions/compare/v1.0.1...v1.0.2) (2026-07-17)
 
 
