@@ -76,14 +76,20 @@ jobs:
         with:
           node-version: ${{ inputs.node-version }}
 
+      # Stable key (lockfile + turbo config + ref) so primary hits share across
+      # commits. Deliberately excludes package.json: Turbo hashes its own task
+      # inputs (including manifests) and decides per-task hit/miss itself, so
+      # restoring a stale .turbo is always safe — it just means more per-task
+      # misses — while a version-only bump must not bust the whole cache.
+      # github.sha always misses and re-saves every run.
       - name: Cache Turbo
         if: inputs.cache-turbo
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ${{ inputs.working-directory }}/.turbo
-          key: ${{ runner.os }}-turbo-${{ hashFiles(format('{0}/bun.lock', inputs.working-directory), format('{0}/turbo.json', inputs.working-directory), '**/package.json') }}-${{ github.ref_name }}
+          key: ${{ runner.os }}-turbo-${{ hashFiles(format('{0}/bun.lock', inputs.working-directory), format('{0}/turbo.json', inputs.working-directory)) }}-${{ github.ref_name }}
           restore-keys: |
-            ${{ runner.os }}-turbo-${{ hashFiles(format('{0}/bun.lock', inputs.working-directory), format('{0}/turbo.json', inputs.working-directory), '**/package.json') }}-
+            ${{ runner.os }}-turbo-${{ hashFiles(format('{0}/bun.lock', inputs.working-directory), format('{0}/turbo.json', inputs.working-directory)) }}-
             ${{ runner.os }}-turbo-
 
       - name: Cache Bun install
