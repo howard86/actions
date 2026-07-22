@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.0.1](https://github.com/howard86/actions/compare/v2.0.0...v2.0.1) (2026-07-22)
+
+
+### Bug Fixes
+
+* **setup:** drop package.json from the Turbo cache key ([49317d8](https://github.com/howard86/actions/commit/49317d80ef2594c73ef7d56cbd0fe7857d7ca61c))
+* **setup:** drop package.json from the Turbo cache key ([aa2c982](https://github.com/howard86/actions/commit/aa2c982245df1bf80b5c831ff645b5a4ba621901))
+
+
+### Dependencies
+
+* pin fixture to bun 1.3.14 ([280acec](https://github.com/howard86/actions/commit/280acec99273d3bd1cf0ec8e9f2538968591cf37))
+
 ## [2.0.0](https://github.com/howard86/actions/compare/v1.0.2...v2.0.0) (2026-07-21)
 
 
