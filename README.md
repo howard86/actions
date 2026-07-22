@@ -108,7 +108,7 @@ caches, and runs a frozen install. Assumes the repo is already checked out.
 | `node-version` | `""` | Empty skips Node setup. |
 | `working-directory` | `"."` | Directory holding `package.json` / `bun.lock`. The Bun version is read from that `package.json` (`packageManager` / `engines.bun`). |
 | `cache-bun` | `"true"` | Restore/save `~/.bun/install/cache`. Set `"false"` on sticky self-hosted runners. |
-| `cache-turbo` | `"true"` | Restore/save `.turbo`. Turbo key is lockfile + manifests + ref (not `github.sha`). |
+| `cache-turbo` | `"true"` | Restore/save `.turbo`. Turbo key is lockfile + turbo config + ref (not `github.sha` or package manifests — Turbo hashes its own task inputs). |
 
 ## Composite: `quality`
 
