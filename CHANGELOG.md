@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.0.2](https://github.com/howard86/actions/compare/v2.0.1...v2.0.2) (2026-07-22)
+
+
+### Bug Fixes
+
+* **ci:** drop package.json from ci.yml inlined Turbo cache key ([d7a2deb](https://github.com/howard86/actions/commit/d7a2deb021715e81fe809425812bc74ab00a7a49))
+* **ci:** drop package.json from ci.yml inlined Turbo cache key ([5676286](https://github.com/howard86/actions/commit/56762866c982f500776726b60f74df83519e546e))
+
 ## [2.0.1](https://github.com/howard86/actions/compare/v2.0.0...v2.0.1) (2026-07-22)
 
 
